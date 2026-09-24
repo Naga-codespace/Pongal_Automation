@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pongal Collection</title>
+</head>
+<body>
+
+<h1>Pongal Collection</h1>
+
+<form id="collectionForm">
+    <input type="text" id="person_name" placeholder="Person Name" required><br><br>
+    <input type="text" id="mobile_number" placeholder="Mobile Number" required><br><br>
+    <input type="number" step="0.01" id="amount" placeholder="Amount" required><br><br>
+    <input type="date" id="collection_date" required><br><br>
+    
+    <select id="payment_mode" required>
+        <option value="">Select Payment Mode</option>
+        <option value="CASH">Cash</option>
+        <option value="UPI">UPI</option>
+    </select><br><br>
+    
+    <select id="payment_status" required>
+        <option value="">Select Payment Status</option>
+        <option value="PAID">Paid</option>
+        <option value="UNPAID">Unpaid</option>
+    </select><br><br>
+
+
+    <input type="text" id="collector_name" placeholder="Collector Name" required><br><br>
+    <button type="submit">Submit</button>
+</form>
+
+<div id="result" style="margin-top: 20px;"></div>
+<div id="share" style="margin-top: 20px;"></div>
+
+<script>
+document.getElementById('collectionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const resultDiv = document.getElementById('result');
+    const shareDiv = document.getElementById('share');
+    resultDiv.innerText = "Submitting...";
+
+    const payload = {
+        person_name: document.getElementById('person_name').value,
+        mobile_number: document.getElementById('mobile_number').value,
+        date : document.getElementById('collection_date').value,
+        amount: document.getElementById('amount').value,
+        collection_date: document.getElementById('collection_date').value,
+        payment_mode: document.getElementById('payment_mode').value,
+        payment_status: document.getElementById('payment_status').value,
+        collector_name: document.getElementById('collector_name').value
+    };
+
+    try {
+        const response = await fetch('/api/collections/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            resultDiv.innerHTML = `<p style="color: green;">Collection created successfully! Token: <strong>${data.token}</strong></p>`;
+            shareDiv.innerHTML = `
+                <div>
+                    <button id="printBtn">Print</button>
+                    <br>
+                    <button id="shareBtn">Share</button>
+                    
+                    <div id="shareOptions" style="display:none;">
+                        <br>
+                        <button id="whatsappBtn">WhatsApp</button>
+                        <button id="emailBtn">Email</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('collectionForm').reset();
+        } else {
+            resultDiv.innerHTML = `<p style="color: red;">Error: ${JSON.stringify(data)}</p>`;
+        }
+    } catch (err) {
+        resultDiv.innerHTML = `<p style="color: red;">Network Error: ${err.message}</p>`;
+    }
+});
+
+document.getElementById("shareBtn").addEventListener("click", function () {
+    document.getElementById("shareOptions").style.display = "block";
+});
+document.getElementById("whatsappBtn").addEventListener("click", function () {
+    const message = `
+Pongal Collection Acknowledgement
+
+Name: ${personName}
+Amount: ₹${amount}
+Payment Mode: ${paymentMode}
+Token: ${token}
+`;
+
+    const url = "https://wa.me/?text=" + encodeURIComponent(message);
+
+    window.open(url, "_blank");
+});
+</script>
+</body>
+</html>
