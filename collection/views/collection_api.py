@@ -4,6 +4,7 @@ from rest_framework import status
 
 from collection.serializers.collection import CollectionSerializer
 from collection.services.collections import create_collection
+from collection.models.collections import Collection
 
 
 class CollectionCreateAPIView(APIView):
@@ -11,6 +12,9 @@ class CollectionCreateAPIView(APIView):
         serializer = CollectionSerializer(
             data=request.data
         )
+        print(serializer)
+        print(serializer.data)
+
         serializer.is_valid(
             raise_exception=True
         )
@@ -24,3 +28,17 @@ class CollectionCreateAPIView(APIView):
             response_serializer.data,
             status=status.HTTP_201_CREATED
         )
+
+
+class CollectionListAPIView(APIView):
+
+    def get(self, request):
+
+        collections = Collection.objects.all()
+        serializer = CollectionSerializer(
+            collections,
+            many=True
+        )
+
+        return Response(serializer.data)
+    

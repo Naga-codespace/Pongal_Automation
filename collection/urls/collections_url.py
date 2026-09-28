@@ -12,6 +12,7 @@ urlpatterns = [
         CollectionCreateAPIView.as_view(),
         name="collection-create-api"
     ),
+    
     # HTML page
     path(
         "collection/create/",
