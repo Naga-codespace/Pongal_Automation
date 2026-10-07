@@ -13,3 +13,9 @@ def collection_list(request):
         request,
         "collection/list.html"
     )
+
+def collection_money_receipt(request, pk):
+    return render(
+        request,
+        "collection/money_receipt.html",{'pk':pk}
+    )   

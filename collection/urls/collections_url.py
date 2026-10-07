@@ -1,7 +1,7 @@
 from django.urls import path
 
 from collection.views.collection_api import CollectionCreateAPIView,CollectionListAPIView,CollectionDetailAPIView,CollectionDeleteAPIView, CollectionUpdateAPIView
-from collection.views.collection_html import collection_create,collection_list
+from collection.views.collection_html import collection_create,collection_list, collection_money_receipt
 
 
 urlpatterns = [
@@ -39,5 +39,8 @@ urlpatterns = [
     path("update/api/<int:pk>",
          CollectionUpdateAPIView.as_view(),
          name="collection-update-api"),
+    path("money-receipt/html/<int:pk>/",
+            collection_money_receipt,
+            name="collection-money-receipt-page")
 
 ]

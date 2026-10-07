@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Pongal Collection{% endblock %}
+{% block page_name %}Money Receipt{% endblock %}
+
+
+{% block content %}
+
+
+<!-- RECEIPT -->
+<div
+    x-data="moneyReceipt()"
+    x-init="loadReceipt()"
+>
+
+    <div
+        x-show="loading"
+        class="text-center"
+    >
+        Loading receipt...
+    </div>
+
+
+    <div
+        x-show="!loading && receipt"
+        id="receipt"
+        class="card"
+    >
+
+        <div class="card-body">
+
+            <div class="text-center">
+                <h3>PONGAL CELEBRATION</h3>
+                <h5>Money Collection Receipt</h5>
+
+                <hr>
+
+                <h4
+                    x-text="receipt.token"
+                ></h4>
+            </div>
+
+
+            <table class="table table-borderless">
+
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td x-text="receipt.person_name"></td>
+                </tr>
+
+                <tr>
+                    <td><strong>Mobile</strong></td>
+                    <td x-text="receipt.mobile_number"></td>
+                </tr>
+
+                <tr>
+                    <td><strong>Amount</strong></td>
+                    <td>
+                        ₹<span x-text="receipt.amount"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>Payment Mode</strong></td>
+                    <td x-text="receipt.payment_mode"></td>
+                </tr>
+
+                <tr>
+                    <td><strong>Date</strong></td>
+                    <td x-text="receipt.collection_date"></td>
+                </tr>
+
+                <tr>
+                    <td><strong>Collected By</strong></td>
+                    <td x-text="receipt.collector_name"></td>
+                </tr>
+
+            </table>
+
+
+            <hr>
+
+            <div class="text-center">
+
+                <p>
+                    Thank you for your contribution!
+                </p>
+
+                <strong>
+                    Happy Pongal!
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        x-show="receipt"
+        class="mt-3"
+    >
+
+        <button
+            class="btn btn-primary"
+            @click="printReceipt()"
+        >
+            Print Receipt
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function moneyReceipt() {
+
+    return {
+
+        loading: true,
+
+        receipt: null,
+
+
+        async loadReceipt() {
+
+            // Get ID from URL
+            const pathParts =
+                window.location.pathname
+                    .split('/')
+                    .filter(Boolean);
+
+            const pk =
+                pathParts[pathParts.length - 1];
+
+
+            // Call detail API
+            const response = await fetch(
+                `/collection/detail/api/${pk}`
+            );
+
+
+            if (!response.ok) {
+
+                this.loading = false;
+
+                alert('Receipt not found');
+
+                return;
+            }
+
+
+            // Convert response to JSON
+            const data =
+                await response.json();
+
+
+            // Store API data
+            this.receipt = data;
+
+
+            this.loading = false;
+        },
+
+
+        printReceipt() {
+
+            window.print();
+
+        }
+
+    };
+
+}
+
+</script>
+
+
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
+</script>
+
+{% endblock %}

@@ -43,7 +43,7 @@
                 <th>Payment Mode</th>
                 <th>Status</th>
                 <th>action</th>
-                <th>Print</th>
+                <th>Download</th>
             </tr>
         </thead>
 
@@ -63,8 +63,11 @@
                         <button @click="deleteUser(user.id)">Delete</button>
                     </td>
                     <td>
-                        <button @click="printUser(user)">Print</button>
-                        <button @click="downloadUser(user)">Share</button>
+                        <button @click="downloadUser(user)">Download</button>
+                        <button @click="shareWhatsApp(user)">
+                            <i class="bi bi-whatsapp"></i>
+                            WhatsApp
+                        </button>
                     </td>
                 </tr>
 
@@ -78,14 +81,34 @@
 
 <script>
 
-        function editUser(user) {
-            // 1. Corrected typo from 'used.id' to 'user.id'
-            // 2. Fixed query string parameter syntax (?id=)
-            // 3. Appended the dynamic JavaScript variable outside the template tag
+    function editUser(user) {
             location.href = "{% url 'collection-create-page' %}?id=" + user.id;
-        }
+    }
 
+    function downloadUser(user) {
+        const url = "{% url 'collection-money-receipt-page' 0 %}".replace(
+            "0",
+            user.id
+        );
+        window.open(url, "_blank");
+    }
+    function shareWhatsApp(user) {
 
+    const message =
+        `*Pongal Collection Acknowledgement*\n\n` +
+        `*Name:* ${user.person_name}\n` +
+        `*Amount:* Rs.${user.amount}\n` +
+        `*Payment Mode:* ${user.payment_mode}\n` +
+        `*Date:* ${user.collection_date}\n` +
+        `*Token:* ${user.token || 'N/A'}\n\n` +
+        `Thank you for your contribution ${user.person_name}!`;
+    const mobile = user.mobile_number;
+    const url =
+        `https://wa.me/91${mobile}?text=` +
+        encodeURIComponent(message);
+
+    window.open(url, "_blank");
+}
     function deleteUser(userId) {
 
         fetch(`/collection/delete/api/${userId}`, {
@@ -93,64 +116,60 @@
         })
         console.log('Delete user:', userId);
     }
-function userTable() {
 
-    return {
+    function userTable() {
+        return {
+            users: [],
+            search: '',
+            async loadUsers() {
 
-        users: [],
-        search: '',
+                const response = await fetch('/collection/list/api');
+                this.users = await response.json();
+            },
+            async deleteUser(userId) {
 
-        async loadUsers() {
+                try {
+                    const response = await fetch(
+                        `/collection/delete/api/${userId}`,
+                        {
+                            method: 'DELETE'
+                        }
+                    );
 
-            const response = await fetch('/collection/list/api');
-            this.users = await response.json();
-        },
-          async deleteUser(userId) {
-
-            try {
-                const response = await fetch(
-                    `/collection/delete/api/${userId}`,
-                    {
-                        method: 'DELETE'
+                    if (!response.ok) {
+                        throw new Error('Delete failed');
                     }
-                );
+                    // Remove deleted user from Alpine list
+                    this.users = this.users.filter(
+                        user => user.id !== userId
+                    );
 
-                if (!response.ok) {
-                    throw new Error('Delete failed');
+                    // Show success alert
+                    this.alertMessage = 'User deleted successfully!';
+                    this.alertType = 'success';
+                    this.showAlert = true;
+                    console.log('Delete user:', userId);
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    this.alertMessage = 'Failed to delete user.';
+                    this.alertType = 'danger';
+                    this.showAlert = true;
                 }
-                // Remove deleted user from Alpine list
-                this.users = this.users.filter(
-                    user => user.id !== userId
+            },
+            get filteredUsers() {
+
+                return this.users.filter(user =>
+                    user.person_name
+                        .toLowerCase()
+                        .includes(this.search.toLowerCase())
                 );
-
-                // Show success alert
-                this.alertMessage = 'User deleted successfully!';
-                this.alertType = 'success';
-                this.showAlert = true;
-                console.log('Delete user:', userId);
-
-            } catch (error) {
-
-                console.error(error);
-
-                this.alertMessage = 'Failed to delete user.';
-                this.alertType = 'danger';
-                this.showAlert = true;
             }
-        },
-
-
-        get filteredUsers() {
-
-            return this.users.filter(user =>
-                user.person_name
-                    .toLowerCase()
-                    .includes(this.search.toLowerCase())
-            );
         }
-
     }
-}
+
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script>
