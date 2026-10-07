@@ -1,0 +1,59 @@
+# ==========================================
+# Python & Django Core Artifacts
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Django local configurations & system logs
+local_settings.py
+*.log
+pip-log.txt
+
+# ==========================================
+# Databases & Uploaded Media
+# ==========================================
+# Exclude the local database and user upload directories
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# ==========================================
+# Virtual Environments & Secrets
+# ==========================================
+# Never commit your environment variables or local virtual environments
+.env
+.venv
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# ==========================================
+# Testing & Coverage Reports
+# ==========================================
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.scrapy
+
+# ==========================================
+# IDE & System Files
+# ==========================================
+# PyCharm, VS Code, and OS-specific files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+Thumbs.db
