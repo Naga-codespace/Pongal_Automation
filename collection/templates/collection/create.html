@@ -1,212 +1,452 @@
 {% extends "base.html" %}
 
 {% block title %}Pongal Collection{% endblock %}
-{% block page_name %}New Collection{% endblock %}
+{% block page_name %}Collection{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white py-3">
-                <h4 class="card-title mb-0 fw-bold">
-                    <i class="bi bi-cash-coin me-2"></i>New Pongal Collection
-                </h4>
-            </div>
-            <div class="card-body p-4">
-                <form id="collectionForm">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="person_name" class="form-label fw-semibold">Person Name <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input type="text" class="form-control" id="person_name" placeholder="Enter person name" required>
-                            </div>
-                        </div>
 
-                        <div class="col-md-6">
-                            <label for="mobile_number" class="form-label fw-semibold">Mobile Number <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                                <input type="tel" class="form-control" id="mobile_number" placeholder="Enter 10-digit mobile" required>
-                            </div>
-                        </div>
+<div
+    x-data="collectionForm()"
+    x-init="init()"
+>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-                        <div class="col-md-6">
-                            <label for="amount" class="form-label fw-semibold">Amount (₹) <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-currency-rupee"></i></span>
-                                <input type="number" step="0.01" class="form-control" id="amount" placeholder="0.00" required>
-                            </div>
-                        </div>
+            <div class="card shadow-sm border-0">
 
-                        <div class="col-md-6">
-                            <label for="collection_date" class="form-label fw-semibold">Collection Date <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
-                                <input type="date" class="form-control" id="collection_date" required>
-                            </div>
-                        </div>
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="card-title mb-0 fw-bold">
+                        <i class="bi bi-cash-coin me-2"></i>
 
-                        <div class="col-md-6">
-                            <label for="payment_mode" class="form-label fw-semibold">Payment Mode <span class="text-danger">*</span></label>
-                            <select class="form-select" id="payment_mode" required>
-                                <option value="">Select Payment Mode</option>
-                                <option value="CASH">Cash</option>
-                                <option value="UPI">UPI</option>
-                            </select>
-                        </div>
+                        <span x-text="isEdit ? 'Update Pongal Collection' : 'New Pongal Collection'"></span>
+                    </h4>
+                </div>
 
-                        <div class="col-md-6">
-                            <label for="payment_status" class="form-label fw-semibold">Payment Status <span class="text-danger">*</span></label>
-                            <select class="form-select" id="payment_status" required>
-                                <option value="">Select Payment Status</option>
-                                <option value="PAID">Paid</option>
-                                <option value="UNPAID">Unpaid</option>
-                            </select>
-                        </div>
+                <div class="card-body p-4">
 
-                        <div class="col-12">
-                            <label for="collector_name" class="form-label fw-semibold">Collector Name <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                <input type="text" class="form-control" id="collector_name" placeholder="Enter collector name" required>
-                            </div>
-                        </div>
+                    <!-- CoreUI Alert -->
+                    <div
+                        x-show="showAlert"
+                        x-transition
+                        class="alert alert-dismissible fade show"
+                        :class="'alert-' + alertType"
+                        role="alert"
+                    >
+                        <span x-text="alertMessage"></span>
 
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                                <i class="bi bi-check-circle me-1"></i> Submit Collection
-                            </button>
-                        </div>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            @click="showAlert = false"
+                            aria-label="Close">
+                        </button>
                     </div>
-                </form>
 
-                <div id="result" class="mt-4"></div>
-                <div id="share" class="mt-3"></div>
+
+                    <form @submit.prevent="saveCollection">
+
+                        <div class="row g-3">
+
+                            <!-- Person Name -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Person Name
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        x-model="form.person_name"
+                                        placeholder="Enter person name"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+
+                            <!-- Mobile Number -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Mobile Number
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-telephone"></i>
+                                    </span>
+
+                                    <input
+                                        type="tel"
+                                        class="form-control"
+                                        x-model="form.mobile_number"
+                                        placeholder="Enter 10-digit mobile"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+
+                            <!-- Amount -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Amount (₹)
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-currency-rupee"></i>
+                                    </span>
+
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        class="form-control"
+                                        x-model="form.amount"
+                                        placeholder="0.00"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+
+                            <!-- Collection Date -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Collection Date
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-calendar3"></i>
+                                    </span>
+
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        x-model="form.collection_date"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+
+                            <!-- Payment Mode -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Payment Mode
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    x-model="form.payment_mode"
+                                    required
+                                >
+                                    <option value="">Select Payment Mode</option>
+                                    <option value="CASH">Cash</option>
+                                    <option value="UPI">UPI</option>
+                                </select>
+                            </div>
+
+
+                            <!-- Payment Status -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Payment Status
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    x-model="form.payment_status"
+                                    required
+                                >
+                                    <option value="">Select Payment Status</option>
+                                    <option value="PAID">Paid</option>
+                                    <option value="UNPAID">Unpaid</option>
+                                </select>
+                            </div>
+
+
+                            <!-- Collector Name -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    Collector Name
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person-badge"></i>
+                                    </span>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        x-model="form.collector_name"
+                                        placeholder="Enter collector name"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+
+                            <!-- Submit -->
+                            <div class="col-12 mt-4">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100 py-2 fw-semibold"
+                                    :disabled="loading"
+                                >
+
+                                    <i
+                                        class="bi"
+                                        :class="isEdit ? 'bi-pencil-square' : 'bi-check-circle'"
+                                    ></i>
+
+                                    <span
+                                        x-text="loading
+                                            ? 'Please wait...'
+                                            : (isEdit ? 'Update Collection' : 'Submit Collection')"
+                                    ></span>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+
+                    <!-- Result -->
+                    <div
+                        x-show="success"
+                        class="mt-4"
+                    >
+
+                        <div class="alert alert-success d-flex align-items-center">
+
+                            <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+
+                            <div>
+
+                                <strong>
+                                    Collection recorded successfully!
+                                </strong>
+
+                                <br>
+
+                                Token:
+                                <span
+                                    class="badge bg-success fs-6"
+                                    x-text="token"
+                                ></span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
+
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
+
 <script>
-// Default date to today
-document.getElementById('collection_date').valueAsDate = new Date();
 
-let lastSubmittedData = null;
+function collectionForm() {
 
-document.getElementById('collectionForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const resultDiv = document.getElementById('result');
-    const shareDiv = document.getElementById('share');
+    return {
 
-    resultDiv.innerHTML = '<div class="alert alert-info py-2"><i class="bi bi-hourglass-split me-1"></i> Submitting...</div>';
-    shareDiv.innerHTML = '';
+        // -------------------------
+        // State
+        // -------------------------
 
-    const payload = {
-        person_name: document.getElementById('person_name').value.trim(),
-        mobile_number: document.getElementById('mobile_number').value.trim(),
-        amount: document.getElementById('amount').value,
-        collection_date: document.getElementById('collection_date').value,
-        payment_mode: document.getElementById('payment_mode').value,
-        payment_status: document.getElementById('payment_status').value,
-        collector_name: document.getElementById('collector_name').value.trim()
-    };
+        isEdit: false,
+        collectionId: null,
 
-    try {
-        const response = await fetch('/api/collections/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify(payload)
-        });
+        loading: false,
+        success: false,
 
-        const data = await response.json();
-        if (response.ok) {
-            lastSubmittedData = {
-                ...payload,
-                token: data.token || 'N/A'
-            };
+        token: '',
 
-            resultDiv.innerHTML = `
-                <div class="alert alert-success d-flex align-items-center" role="alert">
-                    <i class="bi bi-check-circle-fill fs-4 me-2"></i>
-                    <div>
-                        <strong>Collection recorded successfully!</strong><br>
-                        Token: <span class="badge bg-success fs-6">${lastSubmittedData.token}</span>
-                    </div>
-                </div>
-            `;
+        showAlert: false,
+        alertMessage: '',
+        alertType: 'success',
 
-            shareDiv.innerHTML = `
-                <div class="card border p-3 bg-light">
-                    <h6 class="fw-bold mb-2">Actions</h6>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button id="printBtn" class="btn btn-outline-secondary">
-                            <i class="bi bi-printer me-1"></i> Print Receipt
-                        </button>
-                        <button id="shareBtn" class="btn btn-outline-primary">
-                            <i class="bi bi-share me-1"></i> Share
-                        </button>
-                    </div>
-                    <div id="shareOptions" class="mt-3" style="display: none;">
-                        <button id="whatsappBtn" class="btn btn-success me-2">
-                            <i class="bi bi-whatsapp me-1"></i> WhatsApp
-                        </button>
-                        <button id="emailBtn" class="btn btn-danger">
-                            <i class="bi bi-envelope me-1"></i> Email
-                        </button>
-                    </div>
-                </div>
-            `;
 
-            document.getElementById('shareBtn').addEventListener('click', function () {
-                document.getElementById('shareOptions').style.display = 'block';
-            });
+        // -------------------------
+        // Form data
+        // -------------------------
 
-            document.getElementById('printBtn').addEventListener('click', function () {
-                window.print();
-            });
+        form: {
 
-            document.getElementById('whatsappBtn').addEventListener('click', function () {
-                if (!lastSubmittedData) return;
-                const message = `*Pongal Collection Acknowledgement*\n\n` +
-                    `*Name:* ${lastSubmittedData.person_name}\n` +
-                    `*Amount:* Rs.${lastSubmittedData.amount}\n` +
-                    `*Payment Mode:* ${lastSubmittedData.payment_mode}\n` +
-                    `*Date:* ${lastSubmittedData.collection_date}\n` +
-                    `*Token:* ${lastSubmittedData.token}\n\n` +
-                    `Thank you for your contribution!`;
+            person_name: '',
+            mobile_number: '',
+            amount: '',
+            collection_date: '',
+            payment_mode: '',
+            payment_status: '',
+            collector_name: ''
 
-                const url = "https://wa.me/?text=" + encodeURIComponent(message);
-                window.open(url, "_blank");
-            });
+        },
 
-            document.getElementById('emailBtn').addEventListener('click', function () {
-                if (!lastSubmittedData) return;
-                const subject = encodeURIComponent("Pongal Collection Acknowledgement");
-                const body = encodeURIComponent(
-                    `Pongal Collection Acknowledgement\n\n` +
-                    `Name: ${lastSubmittedData.person_name}\n` +
-                    `Amount: Rs.${lastSubmittedData.amount}\n` +
-                    `Payment Mode: ${lastSubmittedData.payment_mode}\n` +
-                    `Date: ${lastSubmittedData.collection_date}\n` +
-                    `Token: ${lastSubmittedData.token}\n`
+
+        // -------------------------
+        // Initialize
+        // -------------------------
+
+        async init() {
+
+            const params = new URLSearchParams(
+                window.location.search
+            );
+            const id = params.get('id');
+            if (id) {
+                // UPDATE MODE
+                this.isEdit = true;
+                this.collectionId = id;
+                await this.loadCollection();
+            } else {
+                // CREATE MODE
+                this.isEdit = false;
+                const today = new Date()
+                    .toISOString()
+                    .split('T')[0];
+                this.form.collection_date = today;
+            }
+        },
+        // -------------------------
+        // Get existing collection
+        // -------------------------
+        async loadCollection() {
+            try {
+                const response = await fetch(
+                    `/collection/detail/api/${this.collectionId}`
                 );
-                window.location.href = `mailto:?subject=${subject}&body=${body}`;
-            });
+                if (!response.ok) {
+                    throw new Error(
+                        'Collection not found'
+                    );
+                }
+                const data = await response.json();
+                this.form.person_name =
+                    data.person_name;
+                this.form.mobile_number =
+                    data.mobile_number;
+                this.form.amount =
+                    data.amount;
+                this.form.collection_date =
+                    data.collection_date;
+                this.form.payment_mode =
+                    data.payment_mode;
+                this.form.payment_status =
+                    data.payment_status;
+                this.form.collector_name =
+                    data.collector_name;
+            } catch (error) {
+                this.alertType = 'danger';
+                this.alertMessage =
+                    'Unable to load collection.';
 
-            document.getElementById('collectionForm').reset();
-            document.getElementById('collection_date').valueAsDate = new Date();
-        } else {
-            resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${JSON.stringify(data)}</div>`;
+                this.showAlert = true;
+          }
+        },
+        // -------------------------
+        // Create / Update
+        // -------------------------
+        async saveCollection() {
+            this.loading = true;
+            this.success = false;
+            this.showAlert = false;
+            try {
+                let url;
+                let method;
+                if (this.isEdit) {
+                    // UPDATE
+                    url =
+                        `/collection/update/api/${this.collectionId}`;
+                    method = 'PUT';
+                } else {
+                    // CREATE
+                    url =
+                        '/collection/create/api';
+                    method = 'POST';
+                }
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+
+                        'Content-Type':
+                            'application/json',
+
+                        'X-CSRFToken':
+                            '{{ csrf_token }}'
+
+                    },
+                    body: JSON.stringify(this.form)
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(
+                        JSON.stringify(data)
+                    );
+                }
+                // -------------------------
+                // Success
+                // -------------------------
+                if (this.isEdit) {
+                    this.alertType = 'success';
+                    this.alertMessage =
+                        'Collection updated successfully!';
+                    this.showAlert = true;
+
+                } else {
+                    this.token =
+                        data.token || 'N/A';
+                    this.success = true;
+                    this.alertType = 'success';
+                    this.alertMessage =
+                        'Collection created successfully!';
+                    this.showAlert = true;
+                }
+
+
+            } catch (error) {
+                console.error(error);
+                this.alertType = 'danger';
+                this.alertMessage =
+                    'Failed to save collection.';
+                this.showAlert = true;
+            } finally {
+                this.loading = false;
+            }
         }
-    } catch (err) {
-        resultDiv.innerHTML = `<div class="alert alert-danger">Network Error: ${err.message}</div>`;
-    }
-});
+
+    };
+}
+
 </script>
+
+
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
+</script>
+
 {% endblock %}

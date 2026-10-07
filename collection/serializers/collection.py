@@ -14,7 +14,7 @@ class CollectionSerializer(serializers.ModelSerializer):
             "token",
             "collector_name",
             "payment_status",
-            "date",
+            # "date",
             "created_at",
         ]
 

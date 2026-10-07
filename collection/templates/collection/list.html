@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Pongal Collection{% endblock %}
+{% block page_name %}List page{% endblock %}
+
+
+{% block content %}
+
+<div
+    x-data="userTable()"
+    x-init="loadUsers()">
+
+    <div
+        x-show="showAlert"
+        x-transition
+        class="alert alert-dismissible fade show"
+        :class="'alert-' + alertType"
+        role="alert"
+    >
+        <span x-text="alertMessage"></span>
+
+        <button
+            type="button"
+            class="btn-close"
+            @click="showAlert = false"
+            aria-label="Close">
+        </button>
+    </div>
+
+    <input
+        type="text"
+        x-model="search"
+        placeholder="Search..."
+    >
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Person Name</th>
+                <th>Mobile Number</th>
+                <th>Amount</th>
+                <th>Collected data</th>
+                <th>Payment Mode</th>
+                <th>Status</th>
+                <th>action</th>
+                <th>Print</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <template x-for="user in filteredUsers" :key="user.id">
+
+                <tr>
+                    <td x-text="user.person_name"></td>
+                    <td x-text="user.mobile_number"></td>
+                    <td x-text="user.amount"></td>
+                    <td x-text="user.collection_date"></td>
+                    <td x-text="user.payment_mode"></td>
+                    <td x-text="user.payment_status"></td>
+                    <td>
+                        <button @click="editUser(user)">Edit</button>
+                        <button @click="deleteUser(user.id)">Delete</button>
+                    </td>
+                    <td>
+                        <button @click="printUser(user)">Print</button>
+                        <button @click="downloadUser(user)">Share</button>
+                    </td>
+                </tr>
+
+            </template>
+
+        </tbody>
+    </table>
+
+</div>
+
+
+<script>
+
+        function editUser(user) {
+            // 1. Corrected typo from 'used.id' to 'user.id'
+            // 2. Fixed query string parameter syntax (?id=)
+            // 3. Appended the dynamic JavaScript variable outside the template tag
+            location.href = "{% url 'collection-create-page' %}?id=" + user.id;
+        }
+
+
+    function deleteUser(userId) {
+
+        fetch(`/collection/delete/api/${userId}`, {
+            method: 'DELETE',
+        })
+        console.log('Delete user:', userId);
+    }
+function userTable() {
+
+    return {
+
+        users: [],
+        search: '',
+
+        async loadUsers() {
+
+            const response = await fetch('/collection/list/api');
+            this.users = await response.json();
+        },
+          async deleteUser(userId) {
+
+            try {
+                const response = await fetch(
+                    `/collection/delete/api/${userId}`,
+                    {
+                        method: 'DELETE'
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Delete failed');
+                }
+                // Remove deleted user from Alpine list
+                this.users = this.users.filter(
+                    user => user.id !== userId
+                );
+
+                // Show success alert
+                this.alertMessage = 'User deleted successfully!';
+                this.alertType = 'success';
+                this.showAlert = true;
+                console.log('Delete user:', userId);
+
+            } catch (error) {
+
+                console.error(error);
+
+                this.alertMessage = 'Failed to delete user.';
+                this.alertType = 'danger';
+                this.showAlert = true;
+            }
+        },
+
+
+        get filteredUsers() {
+
+            return this.users.filter(user =>
+                user.person_name
+                    .toLowerCase()
+                    .includes(this.search.toLowerCase())
+            );
+        }
+
+    }
+}
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script>
+    
+
+
+</script>
+{% endblock %}

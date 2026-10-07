@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Collection(models.Model):
@@ -31,7 +32,11 @@ class Collection(models.Model):
         max_length=10,
         choices=PaymentStatus.choices,
     )
-    date = models.DateTimeField()
+    date = models.DateTimeField(
+        default=timezone.now,
+        blank=True,
+        null=True
+    )
     created_at = models.DateTimeField(
         auto_now_add=True
     )

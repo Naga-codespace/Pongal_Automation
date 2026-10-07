@@ -20,6 +20,5 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', lambda request: redirect('collection-page'), name='home'),
-    path("", include("collection.urls.collections_url")),
+    path("collection/", include("collection.urls.collections_url")),
 ]
