@@ -122,8 +122,16 @@
             users: [],
             search: '',
             async loadUsers() {
+                const token = localStorage.getItem("access_token");
 
-                const response = await fetch('/collection/list/api');
+                const response = await fetch('/collection/list/api', {
+                    method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Authorization': `Bearer ${token}`,
+                }
+                });
                 this.users = await response.json();
             },
             async deleteUser(userId) {

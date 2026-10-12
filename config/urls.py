@@ -17,8 +17,32 @@ Including another URLconf
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import include, path
+from common.views.authentication import log_out_page, login_page
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("collection/", include("collection.urls.collections_url")),
+    path("", include("common.urls")),
+    path("login/", login_page, name="login"),
+    path("logout/", log_out_page, name="logout"),
+     # Login: generate access and refresh tokens
+    path(
+        "api/token/",
+        TokenObtainPairView.as_view(),
+        name="token_obtain_pair",
+    ),
+
+    # Refresh: generate a new access token
+    path(
+        "api/token/refresh/",
+        TokenRefreshView.as_view(),
+        name="token_refresh",
+    ),
+  
 ]
+
+    

@@ -38,7 +38,7 @@
       <ul class="sidebar-nav" data-coreui="navigation" data-simplebar>
         <li class="nav-title">MAIN MENU</li>
         <li class="nav-item">
-          <a class="nav-link" href="/">
+          <a class="nav-link" href="/dashboard/">
             <i class="nav-icon bi bi-speedometer2"></i>
             Dashboard
           </a>
@@ -75,7 +75,7 @@
           </button>
 
           <ul class="header-nav d-none d-md-flex">
-            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/dashboard/">Home</a></li>
           </ul>
 
           <ul class="header-nav ms-auto align-items-center">
@@ -123,7 +123,7 @@
                   <i class="bi bi-gear me-2"></i> Admin Panel
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item text-danger" href="/admin/logout/">
+                <a class="dropdown-item text-danger" href="/logout/">
                   <i class="bi bi-box-arrow-right me-2"></i> Logout
                 </a>
               </div>
@@ -135,7 +135,7 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb my-0">
               {% block breadcrumb %}
-              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item"><a href="/dashboard/">Home</a></li>
               <li class="breadcrumb-item active"><span>{% block page_name %}Dashboard{% endblock %}</span></li>
               {% endblock %}
             </ol>

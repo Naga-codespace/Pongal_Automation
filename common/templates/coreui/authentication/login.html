@@ -1,3 +1,4 @@
+```html
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -8,15 +9,74 @@
 </head>
 <body>
     <h2>Login</h2>
-    <form method="post">
+
+    <form id="loginForm" method="post">
         {% csrf_token %}
+
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
         <br><br>
+
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
         <br><br>
+
         <button type="submit">Login</button>
     </form>
+
+    <p id="message"></p>
+
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const message = document.getElementById("message");
+
+        loginForm.addEventListener("submit", async function (event) {
+            // Prevent the normal form submission and page reload
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("/api/token/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    message.textContent =
+                        data.detail || "Invalid username or password.";
+                    return;
+                }
+                // Demo only: keep the access token in memory.
+                // Avoid storing authentication tokens in localStorage.
+                localStorage.setItem("access_token", data.access);
+                localStorage.setItem("refresh_token", data.refresh);
+
+                message.textContent = "Login successful!";
+
+                console.log("Access token received.");
+                window.location.href = "/collection/list/html";
+
+              
+              // Do not log or expose the actual tokens.
+                // refreshToken is received but not stored in this demo.
+
+            } catch (error) {
+                message.textContent =
+                    "Unable to connect to the server. Please try again.";
+                console.error("Login request failed.");
+            }
+        });
+    </script>
 </body>
 </html>
+```

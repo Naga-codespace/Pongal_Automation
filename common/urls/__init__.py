@@ -1,0 +1,1 @@
+from common.urls.authentication import urlpatterns 
