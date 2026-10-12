@@ -1,1 +1,1 @@
-from common.urls.authentication import urlpatterns 
+from common.urls.common_urls import urlpatterns 

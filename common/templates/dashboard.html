@@ -1,12 +1,168 @@
-
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Pongal Collection{% endblock %}
 {% block page_name %}Dashboard{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'coreui/vendors/@coreui/chartjs/css/coreui-chartjs.css' %}">
+{% endblock %}
 
 {% block content %}
 
- <h1>Welcome to the Dashboard</h1>
+<h1>Welcome to the Dashboard</h1>
+
+<div class="row">
+    <!-- Daily Collection Bar Chart -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-body-tertiary fw-bold">
+                <i class="bi bi-graph-up me-2"></i>
+                Daily Collection Trend
+            </div>
+            <div class="card-body">
+                <canvas id="dailyCollectionChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Mode Doughnut Chart -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-body-tertiary fw-bold">
+                <i class="bi bi-pie-chart me-2"></i>
+                Payment Modes
+            </div>
+            <div class="card-body">
+                <canvas id="paymentModeChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
+{% block extra_js %}
+
+<script src="{% static 'coreui/vendors/chart.js/js/chart.umd.js' %}"></script>
+<script src="{% static 'coreui/vendors/@coreui/chartjs/js/coreui-chartjs.js' %}"></script>
+
+<script>
+async function loadDailyCollectionChart() {
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
+        console.error('Access token not found. Please log in.');
+        return;
+    }
+
+    try {
+        const res = await fetch('/charts-data/daily-collection/', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!res.ok) {
+            throw new Error(`API request failed: ${res.status}`);
+        }
+
+        const collections = await res.json();
+        console.log('Daily Collection Data:', collections);  // Debugging line to check the fetched data
+
+        const ctx1 = document.getElementById('dailyCollectionChart');
+
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: collections.labels,
+                datasets: [{
+                    label: 'Collection Amount (₹)',
+                    data: collections.data,
+                    backgroundColor: 'rgba(50, 31, 219, 0.6)',
+                    borderColor: 'rgba(50, 31, 219, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value.toLocaleString('en-IN');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+            } catch (error) {
+                console.error('Unable to load daily collection chart:', error);
+            }
+        }
+
+async function loadPaymentModeChart() {
+     const token = localStorage.getItem('access_token');
+
+    if (!token) {
+        console.error('Access token not found. Please log in.');
+        return;
+    }
+
+    try {
+        const res = await fetch('/charts-data/payment-mode/', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!res.ok) {
+            throw new Error(`API request failed: ${res.status}`);
+        }
+
+        const collections_1 = await res.json();
+        console.log('Payment Details Data:', collections_1);  //
+        const ctx2 = document.getElementById('paymentModeChart');
+
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels:collections_1.labels,
+            datasets: [{
+                label: 'Collection by Payment Mode',
+                data: collections_1.data,
+                backgroundColor: ['#321fdb', '#2eb85c'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}catch (error) {
+    console.error('Unable to load payment mode chart:', error);
+}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadDailyCollectionChart();
+    loadPaymentModeChart();
+});
+</script>
+
+{% endblock %}
