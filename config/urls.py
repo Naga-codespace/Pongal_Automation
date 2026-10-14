@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import include, path
-from common.views.authentication import log_out_page, login_page
+from common.views.authentication_views import log_out_page, login_page
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,

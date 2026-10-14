@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View as view
 
-from common.services import charts as collection_services_charts
+from common.services import charts_service as collection_services_charts
 
 
 class DashboardService(view):

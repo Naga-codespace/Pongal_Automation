@@ -1,7 +1,7 @@
 from django.urls import path
 
-from common.views.authentication import test_function
-from common.views.dashboard import ChartsData, DashboardService
+from common.views.authentication_views import test_function
+from common.views.dashboard_views import ChartsData, DashboardService
 urlpatterns = [
 
       path("dashboard/",
