@@ -1,5 +1,5 @@
 $kind: http-request
-url: http://127.0.0.1:8000/api/token/refresh/
+url: "{{basic_url}}api/token/refresh/"
 method: POST
 body:
   type: json
@@ -8,4 +8,4 @@ body:
     \    \"refresh\" : \"{{json_web_token_0fil}}\"\r
 
     }"
-order: 2424
+order: 2000

@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{basic_url}}collection/update/api/12"
+method: PUT
+body:
+  type: json
+  content: |
+    {
+      "person_name": "John Doe",
+      "mobile_number": "1234567890",
+      "amount": 100,
+      "collection_date": "2023-10-01",
+      "payment_mode": "CASH",
+      "collector_name": "Admin",
+      "payment_status": "PAID"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access}}"
+order: 4000

@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{basic_url}}collection/detail/api/12"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access}}"
+order: 5000

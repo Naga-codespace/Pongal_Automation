@@ -1,0 +1,48 @@
+$kind: http-request
+url: "{{basic_url}}api/token/"
+method: POST
+body:
+  type: json
+  content: "\r
+
+    {\r
+
+    \  \"username\": \"naga\",\r
+
+    \  \"password\": \"naga\"\r
+
+    }\r
+
+    \  "
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      const response = pm.response.json();\r
+
+      \r
+
+      if (pm.response.code === 200) {\r
+
+      \    if (response.access) {\r
+
+      \        pm.environment.set(\"access\", response.access);\r
+
+      \    }\r
+
+      \r
+
+      \    if (response.refresh) {\r
+
+      \        pm.environment.set(\"refresh\", response.refresh);\r
+
+      \    }\r
+
+      \r
+
+      \    console.log(\"JWT tokens saved successfully\");\r
+
+      }\r\n"
+    language: text/javascript
+examples: .resources/login_api.resources/examples
+order: 1000

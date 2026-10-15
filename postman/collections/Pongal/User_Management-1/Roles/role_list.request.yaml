@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{basic_url}}roles"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access}}"
+order: 1000

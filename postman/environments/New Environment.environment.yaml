@@ -2,3 +2,7 @@ name: New Environment
 values:
   - key: access
     secret: true
+  - key: basic_url
+    value: ''
+  - key: refresh
+    secret: true

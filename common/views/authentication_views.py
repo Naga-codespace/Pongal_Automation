@@ -14,5 +14,6 @@ def log_out_page(request):
     return render(request,'coreui/authentication/log_out.html')  # Redirect to collection list page after login
 
 def test_function(request):
-    collections =  Collection.objects.aggregate(total = Count('id'))
-    return JsonResponse({'message': 'Test function executed successfully.', 'collections': collections})
+    collections =  Collection.objects.all()[::2]
+    print(type(collections))
+    return JsonResponse({'message': 'Test function executed successfully.', 'collections': list(collections.values())})

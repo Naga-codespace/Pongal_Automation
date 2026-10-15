@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{basic_url}}roles/"
+method: POST
+body:
+  type: json
+  content: '{"name" : "thalaivar"}'
+auth:
+  type: bearer
+  credentials:
+    token: "{{access}}"
+order: 2000

@@ -29,7 +29,6 @@ class UserListCreateAPIView(generics.ListCreateAPIView):
 class RoleListCreateAPIView(generics.ListCreateAPIView):
     queryset = Group.objects.all().order_by("name")
     serializer_class = RoleSerializer
-    permission_classes = [IsAdminUser]
 
 
 # 3. PERMISSION MANAGEMENT: list available permissions
@@ -38,12 +37,9 @@ class PermissionListAPIView(generics.ListAPIView):
         "content_type"
     ).order_by("content_type__app_label", "codename")
     serializer_class = PermissionSerializer
-    permission_classes = [IsAdminUser]
-
 
 # 4. USER-ROLE MAPPING
 class UserRoleMappingAPIView(APIView):
-    permission_classes = [IsAdminUser]
 
     def get(self, request, user_id):
         user = get_object_or_404(User, pk=user_id)
@@ -75,7 +71,6 @@ class UserRoleMappingAPIView(APIView):
 
 # 5. ROLE-PERMISSION MAPPING
 class RolePermissionMappingAPIView(APIView):
-    permission_classes = [IsAdminUser]
 
     def get(self, request, role_id):
         role = get_object_or_404(Group, pk=role_id)

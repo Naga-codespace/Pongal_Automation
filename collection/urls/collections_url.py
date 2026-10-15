@@ -31,14 +31,18 @@ urlpatterns = [
     path("detail/api/<int:pk>",
          CollectionDetailAPIView.as_view(),
          name="collection-detail-api"),
+
     #delete ->>>>>>>>>page
     path("delete/api/<int:pk>",
          CollectionDeleteAPIView.as_view(),
          name="collection-delete-api"),
+
     #update ->>>>>>>>>page
     path("update/api/<int:pk>",
          CollectionUpdateAPIView.as_view(),
          name="collection-update-api"),
+
+         
     path("money-receipt/html/<int:pk>/",
             collection_money_receipt,
             name="collection-money-receipt-page")

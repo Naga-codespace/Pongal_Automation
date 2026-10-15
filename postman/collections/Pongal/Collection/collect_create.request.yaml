@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{basic_url}}collection/create/api"
+method: POST
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{access}}"
+order: 1000

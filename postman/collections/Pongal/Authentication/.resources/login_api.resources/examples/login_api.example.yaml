@@ -1,0 +1,39 @@
+$kind: http-example
+request:
+  url: "{{basic_url}}api/token/"
+  method: POST
+  body:
+    type: json
+    content: "\r
+
+      {\r
+
+      \  \"username\": \"naga\",\r
+
+      \  \"password\": \"naga\"\r
+
+      }\r
+
+      \  "
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    date: Thu, 15 Oct 2026 05:36:00 GMT
+    server: WSGIServer/0.2 CPython/3.13.9
+    content-type: application/json
+    vary: Accept
+    allow: POST, OPTIONS
+    x-frame-options: DENY
+    content-length: "489"
+    x-content-type-options: nosniff
+    referrer-policy: same-origin
+    cross-origin-opener-policy: same-origin
+  body:
+    type: json
+    content: |-
+      {
+        "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc5MjEyODk2MCwiaWF0IjoxNzkyMDQyNTYwLCJqdGkiOiI4MDM1Zjg5NjU1YzM0OTdmYjBkYTJlMzk1MjgxMzlhNyIsInVzZXJfaWQiOiIyIn0.v6BRryQCVTOZAAM2PU9NJ6utzBldNPEexodNbmdDdLM",
+        "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkyMDQ5NzYwLCJpYXQiOjE3OTIwNDI1NjAsImp0aSI6IjFiNDFhMGY1ZjlhZjQ3NGZhNTY3MDdmM2Q4MmM1ZGU4IiwidXNlcl9pZCI6IjIifQ.-Q59kbmW-DN0HjPLSn1hQG-aIJeusBgvXYeA04fqBnE"
+      }
+order: 1000

@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{basic_url}}collection/delete/api/13"
+method: DELETE
+auth:
+  type: bearer
+  credentials:
+    token: "{{access}}"
+order: 3000
