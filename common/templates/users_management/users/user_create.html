@@ -1,0 +1,96 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create User{% endblock %}
+{% block page_name %}Create User{% endblock %}
+
+{% block content %}
+
+<div class="card" x-data="userCreateForm()">
+    <div class="card-header">
+        <h5>Create User</h5>
+    </div>
+
+    <div class="card-body">
+        <form @submit.prevent="saveUser($el)">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}"
+                           class="form-label">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.errors %}
+                        <div class="text-danger">
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit"
+                    class="btn btn-primary"
+                    :disabled="loading">
+                <span x-text="loading ? 'Saving...' : 'Create User'"></span>
+            </button>
+        </form>
+
+        <div class="alert alert-success mt-3"
+             x-show="message"
+             x-text="message"></div>
+
+        <div class="alert alert-danger mt-3"
+             x-show="error"
+             x-text="error"></div>
+    </div>
+</div>
+
+<script>
+function userCreateForm() {
+    return {
+        loading: false,
+        message: "",
+        error: "",
+
+        async saveUser(formElement) {
+            this.loading = true;
+            this.message = "";
+            this.error = "";
+
+            try {
+                const formData = new FormData(formElement);
+
+                const payload = {
+                    username: formData.get("username"),
+                    email: formData.get("email"),
+                    password : formData.get("password"),
+                    is_active: formData.get("is_active") === "on"
+                };
+
+                const result = await apiFetch("/users/", {
+                    method: "POST",
+                    body: JSON.stringify(payload)
+                });
+
+                this.message = "User created successfully!";
+                formElement.reset();
+
+                console.log("Created user:", result);
+
+            } catch (err) {
+                this.error = err.message || "Failed to create user";
+                console.error(err);
+            } finally {
+                this.loading = false;
+            }
+        }
+    };
+}
+</script>
+
+{% endblock %}

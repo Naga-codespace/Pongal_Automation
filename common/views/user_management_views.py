@@ -2,7 +2,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.shortcuts import get_object_or_404
-
+from django.views.generic import ListView,CreateView,FormView
+from django.contrib.auth.models import User, Group, Permission
+from common.forms import UserCreateForm
 from rest_framework import generics, status
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -106,3 +108,19 @@ class RolePermissionMappingAPIView(APIView):
         role.permissions.set(permissions)
 
         return self.get(request, role_id)
+
+
+
+class UserListHTMLView(ListView):
+    model = User
+    template_name = "users_management/users/user_list.html"
+
+
+class UserCreateHTMLView(FormView):
+    form_class = UserCreateForm                              # ✅ form class added
+    template_name = "users_management/users/user_create.html"
+    success_url = "/users/"                                  # ✅ redirect after save
+
+    def form_valid(self, form):
+        form.save()          # saves user to DB
+        return super().form_valid(form)

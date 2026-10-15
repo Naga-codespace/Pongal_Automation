@@ -22,8 +22,10 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from django.views.generic import RedirectView
 
 urlpatterns = [
+    path("", RedirectView.as_view(url="/login/", permanent=True)),
     path('admin/', admin.site.urls),
     path("collection/", include("collection.urls.collections_url")),
     path("", include("common.urls")),

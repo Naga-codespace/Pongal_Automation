@@ -139,6 +139,12 @@ SIMPLE_JWT = {
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
+# settings.py
+
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/dashboard/"
+LOGOUT_REDIRECT_URL = "/logout/"
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
