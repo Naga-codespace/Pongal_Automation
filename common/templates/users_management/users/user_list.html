@@ -15,6 +15,7 @@
             <th>Person Name</th>
             <th>Email</th>
             <th>Active status</th>
+            <th>Action</th>
         </tr>
     </thead>
 
@@ -25,6 +26,10 @@
                 <td x-text="item.username"></td>
                 <td x-text="item.email"></td>
                 <td x-text="item.is_active"></td>
+                <td>
+                   <button type="button" @click="updateuser(item)">update</button>
+                   <button type="button" @click="deleteuser(item)">delete</button> 
+                </td>
             </tr>
         </template>
 
@@ -50,9 +55,37 @@ function collectionTable() {
             } catch (error) {
                 console.error("Failed to load collections:", error);
             }
+        },
+        async updateuser(item) {
+              location.href = "{% url 'user_create_html' %}?id=" + item.id;
+        },
+        async deleteuser(item) {
+            if (!confirm(`Are you sure you want to delete ${item.username}?`)) {
+                return;
+            }
+            try {
+                await apiFetch(
+                    `/users_updatedestroy/${item.id}/`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+                this.collections = this.collections.filter(
+                    user => user.id !== item.id
+                );
+                alert("User deleted successfully!");
+            } catch (error) {
+                console.error("Failed to delete user:", error);
+                alert("Failed to delete user.");
+            }
         }
     };
-}
+    };
+    
+    
+
    
 </script>
+
+
 {% endblock %}

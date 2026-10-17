@@ -8,17 +8,20 @@ from common.views.user_management_views import (
     UserRoleMappingAPIView,
     RolePermissionMappingAPIView,
     UserListHTMLView,
-    UserCreateHTMLView
+    UserCreateHTMLView,
+    UserUpdateDestroyAPIView
 )
 
 urlpatterns = [
 
     ##API endpoints for user management, role management, permission management, and their mappings
     # User management
-    path("users/", UserListCreateAPIView.as_view(),
+     path("users/", UserListCreateAPIView.as_view(),
          name="user-list-create"),
 
-
+     path("users_updatedestroy/<int:pk>/", UserUpdateDestroyAPIView.as_view(),
+            name="user-update-delete"),
+            
     # Role management
     path("roles/", RoleListCreateAPIView.as_view(),
          name="role-list-create"),

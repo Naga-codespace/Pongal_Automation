@@ -26,6 +26,11 @@ class UserListCreateAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all().order_by("id")
     serializer_class = UserSerializer
 
+class UserUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all().order_by("id")
+    serializer_class = UserSerializer
+        
+
 
 # 2. ROLE MANAGEMENT: list and create roles
 class RoleListCreateAPIView(generics.ListCreateAPIView):
@@ -123,4 +128,4 @@ class UserCreateHTMLView(FormView):
 
     def form_valid(self, form):
         form.save()          # saves user to DB
-        return super().form_valid(form)
+        return super().form_valid(form)

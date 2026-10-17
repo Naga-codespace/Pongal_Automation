@@ -23,6 +23,8 @@ class UserCreateForm(forms.ModelForm):
             "is_active": forms.CheckboxInput(attrs={
                 "class": "form-check-input",
             }),
+
+            
         }
 
     def save(self, commit=True):
